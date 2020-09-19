@@ -30,6 +30,17 @@ parameters:
     description: aws region override
     default: AWS_REGION
 steps:
+  - run:
+      name: "Python Check"
+      command: |
+        # This makes sure that `python` can be used even if Python 3 is
+        # installed instead of Python 2 or if the user hasn't installed
+        # python-is-python3 apt packaged.
+        # This can likley be removed once this orb exclusively uses the
+        # AWS CLI v2 which bundles its own Python.
+        if ! which python;then
+          sudo ln /usr/bin/python3 /usr/bin/python
+        fi
   - aws-cli/setup:
       aws-access-key-id: << parameters.aws-access-key-id >>
       aws-secret-access-key: << parameters.aws-secret-access-key >>
